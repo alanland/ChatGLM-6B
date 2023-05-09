@@ -3,8 +3,8 @@ import gradio as gr
 import mdtex2html
 import torch
 
-tokenizer = AutoTokenizer.from_pretrained("THUDM/chatglm-6b-int8", trust_remote_code=True)
-model = AutoModel.from_pretrained("THUDM/chatglm-6b-int8",
+tokenizer = AutoTokenizer.from_pretrained("THUDM/chatglm-6b", trust_remote_code=True)
+model = AutoModel.from_pretrained("THUDM/chatglm-6b",
                                   low_cpu_mem_usage=True, trust_remote_code=True)\
     .half().cuda()
 model = model.eval()
