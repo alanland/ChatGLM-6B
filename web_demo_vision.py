@@ -3,7 +3,11 @@ import gradio as gr
 import mdtex2html
 
 tokenizer = AutoTokenizer.from_pretrained("THUDM/visualglm-6b", trust_remote_code=True)
-model = AutoModel.from_pretrained("THUDM/visualglm-6b", trust_remote_code=True).half().cuda()
+model = AutoModel.from_pretrained("THUDM/visualglm-6b",
+                                  device_map="auto",
+                                  # low_cpu_mem_usage=True,
+                                  trust_remote_code=True) \
+    .half().cuda()
 model = model.eval()
 
 """Override Chatbot.postprocess"""
@@ -51,7 +55,7 @@ def parse_text(text):
                     line = line.replace("(", "&#40;")
                     line = line.replace(")", "&#41;")
                     line = line.replace("$", "&#36;")
-                lines[i] = "<br>"+line
+                lines[i] = "<br>" + line
     text = "".join(lines)
     return text
 
@@ -60,7 +64,8 @@ def predict(input, image_path, chatbot, max_length, top_p, temperature, history)
     if image_path is None:
         return [(input, "图片为空！请重新上传图片并重试。")]
     chatbot.append((parse_text(input), ""))
-    for response, history in model.stream_chat(tokenizer, image_path, input, history, max_length=max_length, top_p=top_p,
+    for response, history in model.stream_chat(tokenizer, image_path, input, history, max_length=max_length,
+                                               top_p=top_p,
                                                temperature=temperature):
         chatbot[-1] = (parse_text(input), parse_text(response))
 
@@ -106,7 +111,8 @@ with gr.Blocks() as demo:
 
     history = gr.State([])
 
-    submitBtn.click(predict, [user_input, image_path, chatbot, max_length, top_p, temperature, history], [chatbot, history],
+    submitBtn.click(predict, [user_input, image_path, chatbot, max_length, top_p, temperature, history],
+                    [chatbot, history],
                     show_progress=True)
 
     image_path.upload(predict_new_image, [image_path, chatbot, max_length, top_p, temperature], [chatbot, history],
