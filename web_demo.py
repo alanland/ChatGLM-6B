@@ -2,9 +2,13 @@ from transformers import AutoModel, AutoTokenizer
 import gradio as gr
 import mdtex2html
 import torch
+import sys
 
-tokenizer = AutoTokenizer.from_pretrained("THUDM/chatglm-6b", trust_remote_code=True)
-model = AutoModel.from_pretrained("THUDM/chatglm-6b",
+var = ''.join(sys.argv[1:])
+mvar = '-' + var if var else ''
+
+tokenizer = AutoTokenizer.from_pretrained("THUDM/chatglm-6b" + mvar, trust_remote_code=True)
+model = AutoModel.from_pretrained("THUDM/chatglm-6b" + mvar,
                                   device_map="auto",
                                   low_cpu_mem_usage=True, trust_remote_code=True) \
     .half().cuda()
