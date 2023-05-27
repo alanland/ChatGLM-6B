@@ -10,7 +10,8 @@ mvar = '-' + var if var else ''
 tokenizer = AutoTokenizer.from_pretrained("THUDM/chatglm-6b" + mvar, trust_remote_code=True)
 model = AutoModel.from_pretrained("THUDM/chatglm-6b" + mvar,
                                   device_map="auto",
-                                  low_cpu_mem_usage=True, trust_remote_code=True) \
+                                  # low_cpu_mem_usage=True,
+                                  trust_remote_code=True) \
     .half().cuda()
 model = model.eval()
 
